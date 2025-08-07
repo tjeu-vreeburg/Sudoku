@@ -1,7 +1,7 @@
 # ![test](https://github.com/favicon.ico) Sudoku
 A simple web sudoku game
 
-# ✔ Tasks
+# ✓ Tasks
 - [ ] Improve Solver
 - [ ] Remove global variables and create a wrapper?
 - [ ] Fix html structure
