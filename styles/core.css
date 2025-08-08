@@ -24,6 +24,16 @@ table {
   margin:1em auto;
 }
 
+.bg-custom-gray, input.bg-custom-gray:focus {
+  background-color: #edf1f5;
+  color: #4a6472;
+}
+
+.bg-incorrect, input.bg-incorrect:focus  {
+  background-color: #ff9ea5;
+  color: #ff0000;
+}
+
 td {
   height:30px;
   width:30px;

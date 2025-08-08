@@ -1,98 +1,141 @@
-var array;
-var arrayCurrent;
-var table;
-var required;
-
-$(document).ready(() => {
-  $('#easy').click(() => array = create("Easy", "success", 0.4));
-  $('#medium').click(() => array = create("Medium", "primary", 0.5));
-  $('#hard').click(() => array = create("Hard", "danger", 0.6));
-
-  $('#solve').click(() => {
-    solve(array);
-    updateGrid();
-    $('.progress-bar').width(100 + "%");
-  });
-
-  $('#back').click(() => {
-    $('.game').toggle();
-    $('.setup').toggle();
-  });
-});
-
-function create(type, badge, difficulty) {
-  array = generate(difficulty);
-  table = document.getElementById('sudoku');
-
-  $("#" + table.id).empty();
-  $("#difficulty").html("SUDOKU <span class=\"badge badge-" + badge + "\">" + type + "</span>");
-  $(".progress").html("<div class=\"progress-bar progress-bar-striped progress-bar-animated bg-" + badge + "\" role=\"progressbar\"></div>");
-
-  required = setupGrid();
-  updateGrid();
-
-  $('.progress-bar').width(0 + "%");
-  $('.game').toggle();
-  $('.setup').toggle();
-  return array;
-}
-
-function setupGrid() {
-  var amount = 0;
-
-  for(var i = 0; i < array.length; i++) {
-    $("#" + table.id).append($("<tr id=row-" + i + "></tr>"));
-    for(var j = 0; j < array.length; j++) {
-      var element = $("#row-" + i);
-      var value = array[i][j];
-
-      if(value == null) {
-        amount += 1;
-        element.append($("<td><input type=\"text\" id=\"fname\" name=\"fname\" value=\"" + array[i][j] + "\" onchange=\"checkRegex(this.value, this)\" maxlength=\"1\"y></td>"));
-      } else {
-        element.append($("<td id=\"light-grey\"><input type=\"text\" id=\"fname\" class=\"static-td\" name=\"fname\" value=\"" + array[i][j] + "\" onchange=\"checkRegex(this.value, this)\" maxlength=\"1\"readonly></td>"));
-      }
+class SudokuCore {
+    constructor() {
+        this.generator = new SudokuGenerator();
+        this.solver = new SudokuSolver();
+        this.array = null;
+        this.arrayCurrent = null;
+        this.table = document.getElementById('sudoku');
+        this.required = 0;
+        this.mistakes = 0;
+        this.maxMistakes = 3;
+        this.initEvents();
     }
-  }
-  return amount;
-}
 
-function checkRegex(value, element) {
-  element.value = new RegExp('[0-9]').test(value) ? value : null;
+    initEvents() {
+        $('#easy').click(() => this.create("Easy", "success", 0.4));
+        $('#medium').click(() => this.create("Medium", "warning", 0.5));
+        $('#hard').click(() => this.create("Hard", "danger", 0.6));
 
-  updateArray();
-  $('.progress-bar').width(emptySpace() / required * 100 + "%");
-}
+        $('#solve').click(() => {
+            this.solver.solve(this.array);
+            this.updateGrid();
+            $('.progress-bar').width("100%");
+            $("#difficulty p").text(`Game Solved!`);
+        });
 
-function emptySpace() {
-  var amount = required;
-  for (var x = 0; x < arrayCurrent.length; x++) {
-    for (var y = 0; y < arrayCurrent.length; y++) {
-      if(arrayCurrent[x][y] == null) amount -= 1;
+        $('#back').click(() => {
+            $('.game').toggle();
+            $('.setup').toggle();
+        });
     }
-  }
-  return amount;
-}
 
-function updateArray() {
-  arrayCurrent = [];
-  var rows = table.childNodes;
-  for (var x = 0; x < array.length; x++) {
-    arrayCurrent[x] = [];
-    var columns = rows[x].childNodes;
-    for (var y = 0; y < array.length; y++) {
-      var value = columns[y].childNodes[0].value;
-      arrayCurrent[x][y] = new RegExp('[0-9]').test(value) ? value : null;
-    }
-  }
-}
+    create(type, badge, difficulty) {
+        this.array = this.generator.generate(difficulty);
+        this.solvedArray = JSON.parse(JSON.stringify(this.array));
+        this.solver.solve(this.solvedArray);
+        this.mistakes = 0;
 
-function updateGrid() {
-  var rows = table.childNodes;
-  for (var x = 0; x < array.length; x++) {
-    var columns = rows[x].childNodes;
-    for (var y = 0; y < array.length; y++) {
-      columns[y].childNodes[0].value = array[x][y];
+        $("#" + this.table.id).empty();
+        $("#difficulty").html(`SUDOKU <span class="badge badge-${badge} text-white">${type}</span><p class="small">Mistakes: ${this.mistakes}/${this.maxMistakes}</p>`);
+        $(".progress").html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-${badge}" role="progressbar"></div>`);
+
+        this.required = this.setupGrid();
+        this.updateGrid();
+
+        $('.progress-bar').width("0%");
+        $('.game').toggle();
+        $('.setup').toggle();
     }
-  }
+
+    setupGrid() {
+        let amount = 0;
+        for (let i = 0; i < this.array.length; i++) {
+            $("#" + this.table.id).append($(`<tr id=row-${i}></tr>`));
+            for (let j = 0; j < this.array.length; j++) {
+                let element = $(`#row-${i}`);
+                let value = this.array[i][j];
+
+                if (value == null) {
+                    amount++;
+                    element.append($(`<td><input type="text" maxlength="1"></td>`).on('change', (e) => this.checkRegex(e.target.value, e.target, i, j)));
+                } else {
+                    element.append($(`<td><input type="text" class="static-td bg-custom-gray" value="${value}" readonly></td>`));
+                }
+            }
+        }
+        return amount;
+    }
+
+    checkRegex(value, element, row, col) {
+        if(this.mistakes >= this.maxMistakes) return;
+        
+        const trimmedValue = value.trim();
+        if (!/^[1-9]$/.test(trimmedValue)) {
+            element.value = "";
+            element.classList.remove('bg-incorrect');
+        } else {
+            const num = parseInt(trimmedValue, 10);
+            if (this.solvedArray && num !== this.solvedArray[row][col]) {
+                element.classList.add('bg-incorrect');
+                this.mistakes++;
+            } else {
+                element.classList.remove('bg-incorrect');
+            }
+        }
+
+        const correctCount = this.updateArray();
+        if(this.mistakes >= this.maxMistakes) {
+            $('#sudoku input[type="text"]:not([readonly])').prop('disabled', true);
+            $("#difficulty p").text(`Game Over!`);
+        } else if(correctCount >= this.required) {
+            $('#sudoku input[type="text"]:not([readonly])').prop('disabled', true);
+            $("#difficulty p").text(`You have won!`);
+        } else {
+            const progressPercent = (correctCount / this.required) * 100;
+            $("#difficulty p").text(`Mistakes: ${this.mistakes}/${this.maxMistakes}`);
+            $('.progress-bar').width(progressPercent + "%");
+        }
+    }
+
+    updateArray() {
+        this.arrayCurrent = [];
+        let rows = this.table.childNodes;
+        let correctCount = 0;
+
+        for (let x = 0; x < this.array.length; x++) {
+            this.arrayCurrent[x] = [];
+            let columns = rows[x].childNodes;
+
+            for (let y = 0; y < this.array.length; y++) {
+                let cellValue = columns[y].childNodes[0].value.trim();
+
+                if (/^[1-9]$/.test(cellValue)) {
+                    const num = parseInt(cellValue, 10);
+                    this.arrayCurrent[x][y] = num;
+
+                    if (this.array[x][y] === null && this.solvedArray && num === this.solvedArray[x][y]) {
+                        correctCount++;
+                    }
+                } else {
+                    this.arrayCurrent[x][y] = null;
+                }
+            }
+        }
+
+        return correctCount;
+    }
+
+    updateGrid() {
+        let rows = this.table.childNodes;
+        for (let x = 0; x < this.array.length; x++) {
+            let columns = rows[x].childNodes;
+            for (let y = 0; y < this.array.length; y++) {
+                columns[y].childNodes[0].value = this.array[x][y];
+            }
+        }
+    }
+
+    updateDifficulty() {
+        $("#difficulty").html(`SUDOKU <span class="badge badge-${badge}">${type}</span><p>${this.mistakes}/${this.maxMistakes}`);
+    }
 }
