@@ -1,7 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sudoku</title>
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/core.css">
+    <link rel="stylesheet" href="styles/animation.css">
+
+    <!-- JS Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" crossorigin="anonymous"></script>
@@ -12,45 +24,61 @@
     <script>
         $(document).ready(() => new SudokuCore());
     </script>
-
-    <link rel="stylesheet" href="styles/core.css">
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <title>Sudoku</title>
   </head>
   <body>
-    <div class="setup">
-      <div class="setup-container container-custom shadow-sm bg-white rounded">
-        <div class="text-center mt-4 mb-3">
-          <h1>SUDOKU</h1>
-          <p>A number puzzle game.</p>
-          <button type="button" class="btn btn-success m-1" id="easy">Easy</button>
-          <button type="button" class="btn btn-warning text-white m-1" id="medium">Medium</button>
-          <button type="button" class="btn btn-danger m-1" id="hard">Hard</button>
+
+    <div class="outerlayer">
+
+      <a href="https://tjeu-vreeburg.github.io" class="btn btn-light fixed-top-left">My Profile</a>
+      
+      <div class="setup">
+        <div class="setup-container container-custom shadow-sm bg-white rounded">
+          <div class="text-center mt-4 mb-3">
+            <h1>SUDOKU</h1>
+            <p>A number puzzle game.</p>
+            <button type="button" class="btn btn-success m-1" id="easy">Easy</button>
+            <button type="button" class="btn btn-warning text-white m-1" id="medium">Medium</button>
+            <button type="button" class="btn btn-danger m-1" id="hard">Hard</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="game" style="display: none;">
+        <div class="setup-container container-custom shadow-sm bg-white rounded">
+          <h1 class="text-center mt-3" id="difficulty"></h1>
+          <div class="text-center mt-4 mb-3">
+            <div class="progress"></div>
+          </div>
+        </div>
+
+        <div class="sudoku-container container-custom shadow-sm bg-white rounded">
+          <div class="d-flex justify-content-center">
+            <table id="sudoku" class="table table-bordered"></table>
+          </div>
+
+          <div class="text-center mt-4 mb-3">
+            <button type="button" class="btn btn-primary m-1" id="solve">Solve</button>
+            <button type="button" class="btn btn-outline-primary m-1" id="back">Back</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="game" style="display: none;">
-      <div class="setup-container container-custom shadow-sm bg-white rounded">
-        <h1 class="text-center mt-3" id="difficulty"></h1>
-        <div class="text-center mt-4 mb-3">
-          <div class="progress"></div>
-        </div>
-      </div>
-
-      <div class="sudoku-container container-custom shadow-sm bg-white rounded">
-        <div class="d-flex justify-content-center">
-          <table id="sudoku" class="table table-bordered"></table>
-        </div>
-
-        <div class="text-center mt-4 mb-3">
-          <button type="button" class="btn btn-primary m-1" id="solve">Solve</button>
-          <button type="button" class="btn btn-outline-primary m-1" id="back">Back</button>
-        </div>
-      </div>
+    <div class="fixed-bottom">
+      <svg class="waves" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18
+              58-18 88-18 58 18 88 18 v44h-352z" />
+        </defs>
+        <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.7)" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.5)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="7" fill="#fff" />
+        </g>
+      </svg>
     </div>
   </body>
 </html>
