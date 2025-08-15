@@ -2,8 +2,8 @@ body {
   background-color: #f1f1f1;
 }
 
-#light-grey {
-  background-color: #eeeeee;
+h1 {
+  font-size: 2.5rem !important;
 }
 
 input {
@@ -24,16 +24,6 @@ table {
   margin:1em auto;
 }
 
-.bg-custom-gray, input.bg-custom-gray:focus {
-  background-color: #edf1f5;
-  color: #4a6472;
-}
-
-.bg-incorrect, input.bg-incorrect:focus  {
-  background-color: #ff9ea5;
-  color: #ff0000;
-}
-
 td {
   height:30px;
   width:30px;
@@ -52,4 +42,79 @@ tr:first-child {
 }
 tr:nth-child(3n) td {
   border-bottom: solid;
+}
+
+.bg-custom-gray, input.bg-custom-gray:focus {
+  color: #4a6472;
+}
+
+.bg-incorrect, input.bg-incorrect:focus  {
+  color: #ff0000;
+}
+
+.container-custom {
+  padding: 15px;
+  margin: 20px auto;
+}
+
+.sudoku-container {
+  width: 450px;
+  margin: 0 auto;
+}
+
+.setup-container {
+  width: 450px;
+  margin: 0 auto;
+}
+
+#sudoku {
+  width: 450px;
+  margin: 0 auto;
+}
+
+#sudoku td {
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+}
+
+#sudoku input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  background: transparent;
+  outline: none;
+}
+
+#light-grey {
+  background-color: #eeeeee;
+}
+    
+@media (max-width: 480px) {
+  #sudoku {
+    width: 315px;
+  }
+  
+  #sudoku td {
+    width: 35px;
+    height: 35px;
+  }
+  
+  #sudoku input {
+    font-size: 16px;
+  }
+  
+  .sudoku-container,
+  .setup-container {
+    width: 315px;
+  }
+  
+  h1 {
+    font-size: 2rem !important;
+  }
 }
